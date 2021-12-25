@@ -28,12 +28,15 @@ func home(c echo.Context) error {
 
 //Метод -POST-
 //Добавление нового Person
-func addPerson(c echo.Context) error {
+func addPerson(c echo.Context) (err error) {
 	u := new(Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	logic.AddPerson(u)
+	err = logic.AddPerson(u)
+	if err != nil {
+		return err
+	}
 
 	return c.String(201, "New Person added")
 
@@ -62,22 +65,27 @@ func getPerson(c echo.Context) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func updatePerson(c echo.Context) error {
+func updatePerson(c echo.Context) (err error) {
 	id := c.Param("id")
 	u := new(Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	logic.UpdatePerson(u, id)
+	err = logic.UpdatePerson(u, id)
+	if err != nil {
+		return err
+	}
 
 	return c.String(http.StatusOK, "Data updated successfully")
 
 }
 
-func deletePerson(c echo.Context) error {
+func deletePerson(c echo.Context) (err error) {
 	id := c.Param("id")
-
-	logic.DeletePerson(id)
+	err = logic.DeletePerson(id)
+	if err != nil {
+		return err
+	}
 	return c.String(http.StatusOK, "Deleted Person with id - "+id)
 
 }
