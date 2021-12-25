@@ -39,19 +39,25 @@ func addPerson(c echo.Context) error {
 
 }
 
-func getPersons(c echo.Context) error {
+func getPersons(c echo.Context) (err error) {
 	u := new(Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	result := logic.GetPersons(u)
+	result, err := logic.GetPersons(u)
+	if err != nil {
+		return err
+	}
 
 	return c.JSON(http.StatusCreated, result)
 }
 
-func getPerson(c echo.Context) error {
+func getPerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	result := logic.GetPerson(id)
+	result, err := logic.GetPerson(id)
+	if err != nil {
+		return err
+	}
 
 	return c.JSON(http.StatusCreated, result)
 }

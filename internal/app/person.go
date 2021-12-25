@@ -8,6 +8,6 @@ type Person struct {
 	LastName  string `json:"lastName"`
 }
 
-type JsonPerson struct {
-	JsonPersons []Person `json:"jsonpersons"`
-}
+// type JsonPerson struct {
+// 	JsonPersons []Person `json:"jsonpersons"`
+// }

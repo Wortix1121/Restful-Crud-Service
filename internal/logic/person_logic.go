@@ -2,31 +2,46 @@ package logic
 
 import (
 	. "rest-go-service/restGoService/internal/app"
-	"rest-go-service/restGoService/internal/postgreSQL"
+	postgreSQL "rest-go-service/restGoService/internal/postgre"
 )
 
-func AddPerson(u *Person) {
-	postgreSQL.AddPerson(u)
+func AddPerson(u *Person) (err error) {
+	err = postgreSQL.AddPerson(u)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetPersons(u *Person) (all []Person, err error) {
+	all, err = postgreSQL.GetPersons(u)
+	if err != nil {
+		return all, nil
+	}
+	return all, err
+}
+
+func GetPerson(id string) (getOne []Person, err error) {
+	getOne, err = postgreSQL.GetPerson(id)
+	if err != nil {
+		return getOne, nil
+	}
+	return getOne, err
 
 }
 
-func GetPersons(u *Person) JsonPerson {
-	all := postgreSQL.GetPersons(u)
-	return all
+func UpdatePerson(u *Person, id string) (err error) {
+	err = postgreSQL.UpdatePerson(u, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func GetPerson(id string) JsonPerson {
-	getOne := postgreSQL.GetPerson(id)
-	return getOne
-
-}
-
-func UpdatePerson(u *Person, id string) {
-	postgreSQL.UpdatePerson(u, id)
-
-}
-
-func DeletePerson(id string) {
-	postgreSQL.DeletePerson(id)
-
+func DeletePerson(id string) (err error) {
+	err = postgreSQL.DeletePerson(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

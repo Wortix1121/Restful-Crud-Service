@@ -19,6 +19,11 @@ const (
 	dbname   = "testdb"
 )
 
+var (
+	onePerson = []Person{}
+	persons   = []Person{}
+)
+
 func Connect() *sql.DB {
 	pgInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
@@ -31,18 +36,16 @@ func Connect() *sql.DB {
 	return db
 }
 
-func AddPerson(u *Person) {
+func AddPerson(u *Person) (err error) {
 	//Create Person
 	db := Connect()
 	sqlInq := "INSERT INTO persons(email, phone, firstName, lastName)VALUES($1,$2,$3,$4)"
 	create, err := db.Query(sqlInq, u.Email, u.Phone, u.FirstName, u.LastName)
-	if err != nil {
-		log.Fatal("Error creating Person", err.Error())
-	}
 	defer create.Close()
+	return err
 }
 
-func GetPersons(u *Person) JsonPerson {
+func GetPersons(u *Person) (persons []Person, err error) {
 	db := Connect()
 	sqlInq := "SELECT id, email, phone, firstName, lastName FROM persons ORDER BY id asc"
 	get, err := db.Query(sqlInq)
@@ -51,21 +54,21 @@ func GetPersons(u *Person) JsonPerson {
 	}
 	defer get.Close()
 
-	result := JsonPerson{}
+	persons = []Person{}
 
 	for get.Next() {
-		persons := Person{}
-		err2 := get.Scan(&persons.Id, &persons.Email, &persons.Phone, &persons.FirstName, &persons.LastName)
+		var person Person
+		err2 := get.Scan(&person.Id, &person.Email, &person.Phone, &person.FirstName, &person.LastName)
 		if err2 != nil {
 			log.Println(err2)
 		}
-		result.JsonPersons = append(result.JsonPersons, persons)
+		persons = append(persons, person)
 	}
-	return result
+	return persons, err
 
 }
 
-func GetPerson(id string) JsonPerson {
+func GetPerson(id string) (persons []Person, err error) {
 	db := Connect()
 	sqlInq := "SELECT id, email, phone, firstname, lastname FROM persons WHERE id=$1"
 	res, err := db.Query(sqlInq, id)
@@ -74,35 +77,31 @@ func GetPerson(id string) JsonPerson {
 	}
 	defer res.Close()
 
-	result := JsonPerson{}
+	onePerson = []Person{}
 
 	for res.Next() {
-		persons := Person{}
+		var persons Person
 		err2 := res.Scan(&persons.Id, &persons.Email, &persons.Phone, &persons.FirstName, &persons.LastName)
 		if err2 != nil {
 			log.Println(err2)
 		}
-		result.JsonPersons = append(result.JsonPersons, persons)
+		onePerson = append(onePerson, persons)
 	}
-	return result
+	return onePerson, err
 }
 
-func UpdatePerson(u *Person, id string) {
+func UpdatePerson(u *Person, id string) (err error) {
 	db := Connect()
 	sqlInq := "UPDATE persons SET email=$1, phone=$2, firstname=$3, lastname=$4 WHERE id=$5"
 	res, err := db.Query(sqlInq, u.Email, u.Phone, u.FirstName, u.LastName, id)
-	if err != nil {
-		log.Println(err)
-	}
 	defer res.Close()
+	return err
 }
 
-func DeletePerson(id string) {
+func DeletePerson(id string) (err error) {
 	db := Connect()
 	sqlInq := "DELETE FROM persons WHERE id=$1"
 	res, err := db.Query(sqlInq, id)
-	if err != nil {
-		log.Println(err)
-	}
 	defer res.Close()
+	return err
 }
