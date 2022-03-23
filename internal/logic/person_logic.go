@@ -1,28 +1,36 @@
 package logic
 
 import (
-	. "rest-go-service/restGoService/internal/app"
-	postgreSQL "rest-go-service/restGoService/internal/postgre"
+	app "rest-go-service/restGoService/internal/app"
 )
 
-func AddPerson(u *Person) (err error) {
-	err = postgreSQL.AddPerson(u)
+type logics struct {
+	person app.LgPersons
+}
+
+func NewLogic(person app.LgPersons) *logics {
+	return &logics{person: person}
+}
+
+func (l logics) Add(u *app.Person, d app.DbPersons) (err error) {
+	err = d.AddPerson(u)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetPersons(u *Person) (all []Person, err error) {
-	all, err = postgreSQL.GetPersons(u)
+func (l logics) Get(u *app.Person, p app.DbPersons) (all []app.Person, err error) {
+
+	all, err = p.GetPersons(u)
 	if err != nil {
 		return all, nil
 	}
 	return all, err
 }
 
-func GetPerson(id string) (getOne []Person, err error) {
-	getOne, err = postgreSQL.GetPerson(id)
+func (l logics) GetAll(id string, p app.DbPersons) (getOne []app.Person, err error) {
+	getOne, err = p.GetPerson(id)
 	if err != nil {
 		return getOne, nil
 	}
@@ -30,16 +38,16 @@ func GetPerson(id string) (getOne []Person, err error) {
 
 }
 
-func UpdatePerson(u *Person, id string) (err error) {
-	err = postgreSQL.UpdatePerson(u, id)
+func (l logics) Update(u *app.Person, id string, p app.DbPersons) (err error) {
+	err = p.UpdatePerson(u, id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func DeletePerson(id string) (err error) {
-	err = postgreSQL.DeletePerson(id)
+func (l logics) Delete(id string, p app.DbPersons) (err error) {
+	err = p.DeletePerson(id)
 	if err != nil {
 		return err
 	}

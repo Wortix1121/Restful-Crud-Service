@@ -2,14 +2,39 @@ package postgreSQL
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
-	"fmt"
-
-	. "rest-go-service/restGoService/internal/app"
+	app "rest-go-service/restGoService/internal/app"
 
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
+
+// type Server interface {
+// }
+
+// type logics struct {
+// 	person app.Persons
+// }
+
+// func NewLogic(person app.Persons) *logics {
+// 	return &logics{person: person}
+// }
+
+type dataBase struct {
+	config *Config
+	logger *logrus.Logger
+	person app.DbPersons
+}
+
+func NewDb(config *Config, logger *logrus.Logger, person app.DbPersons) *dataBase {
+	return &dataBase{
+		config: config,
+		logger: logger,
+		person: person,
+	}
+}
 
 const (
 	host     = "localhost"
@@ -20,8 +45,7 @@ const (
 )
 
 var (
-	onePerson = []Person{}
-	persons   = []Person{}
+	Persons = []app.Person{}
 )
 
 func Connect() *sql.DB {
@@ -36,16 +60,20 @@ func Connect() *sql.DB {
 	return db
 }
 
-func AddPerson(u *Person) (err error) {
+func (d dataBase) AddPerson(u *app.Person) (err error) {
 	//Create Person
 	db := Connect()
 	sqlInq := "INSERT INTO persons(email, phone, firstName, lastName)VALUES($1,$2,$3,$4)"
 	create, err := db.Query(sqlInq, u.Email, u.Phone, u.FirstName, u.LastName)
+	if err != nil {
+		return err
+	}
 	defer create.Close()
 	return err
+
 }
 
-func GetPersons(u *Person) (persons []Person, err error) {
+func (d dataBase) GetPersons(u *app.Person) (persons []app.Person, err error) {
 	db := Connect()
 	sqlInq := "SELECT id, email, phone, firstName, lastName FROM persons ORDER BY id asc"
 	get, err := db.Query(sqlInq)
@@ -54,10 +82,10 @@ func GetPersons(u *Person) (persons []Person, err error) {
 	}
 	defer get.Close()
 
-	persons = []Person{}
+	persons = []app.Person{}
 
 	for get.Next() {
-		var person Person
+		var person app.Person
 		err2 := get.Scan(&person.Id, &person.Email, &person.Phone, &person.FirstName, &person.LastName)
 		if err2 != nil {
 			log.Println(err2)
@@ -68,7 +96,7 @@ func GetPersons(u *Person) (persons []Person, err error) {
 
 }
 
-func GetPerson(id string) (persons []Person, err error) {
+func (d dataBase) GetPerson(id string) (persons []app.Person, err error) {
 	db := Connect()
 	sqlInq := "SELECT id, email, phone, firstname, lastname FROM persons WHERE id=$1"
 	res, err := db.Query(sqlInq, id)
@@ -77,31 +105,37 @@ func GetPerson(id string) (persons []Person, err error) {
 	}
 	defer res.Close()
 
-	onePerson = []Person{}
+	Persons = []app.Person{}
 
 	for res.Next() {
-		var persons Person
-		err2 := res.Scan(&persons.Id, &persons.Email, &persons.Phone, &persons.FirstName, &persons.LastName)
+		var person app.Person
+		err2 := res.Scan(&person.Id, &person.Email, &person.Phone, &person.FirstName, &person.LastName)
 		if err2 != nil {
 			log.Println(err2)
 		}
-		onePerson = append(onePerson, persons)
+		Persons = append(Persons, person)
 	}
-	return onePerson, err
+	return Persons, err
 }
 
-func UpdatePerson(u *Person, id string) (err error) {
+func (d dataBase) UpdatePerson(u *app.Person, id string) (err error) {
 	db := Connect()
 	sqlInq := "UPDATE persons SET email=$1, phone=$2, firstname=$3, lastname=$4 WHERE id=$5"
 	res, err := db.Query(sqlInq, u.Email, u.Phone, u.FirstName, u.LastName, id)
+	if err != nil {
+		return err
+	}
 	defer res.Close()
 	return err
 }
 
-func DeletePerson(id string) (err error) {
+func (d dataBase) DeletePerson(id string) (err error) {
 	db := Connect()
 	sqlInq := "DELETE FROM persons WHERE id=$1"
 	res, err := db.Query(sqlInq, id)
+	if err != nil {
+		return err
+	}
 	defer res.Close()
 	return err
 }

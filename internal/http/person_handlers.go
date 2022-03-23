@@ -3,14 +3,12 @@ package http
 import (
 	"net/http"
 
-	. "rest-go-service/restGoService/internal/app"
-	logic "rest-go-service/restGoService/internal/logic"
+	app "rest-go-service/restGoService/internal/app"
 
 	"github.com/labstack/echo/v4"
 )
 
-func Starting() {
-	e := echo.New()
+func Starting(e *echo.Echo) {
 
 	e.GET("/", home)
 	e.POST("/person", addPerson)
@@ -19,21 +17,18 @@ func Starting() {
 	e.PUT("/person/:id", updatePerson)
 	e.DELETE("/person/:id", deletePerson)
 
-	//Запуск локального сервера
-	e.Logger.Fatal(e.Start(":8000"))
 }
 func home(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello!")
 }
 
-//Метод -POST-
-//Добавление нового Person
-func addPerson(c echo.Context) (err error) {
-	u := new(Person)
+func addPerson(c echo.Context, l app.LgPersons) (err error) {
+	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	err = logic.AddPerson(u)
+
+	err = l.Add(u)
 	if err != nil {
 		return err
 	}
@@ -42,12 +37,14 @@ func addPerson(c echo.Context) (err error) {
 
 }
 
-func getPersons(c echo.Context) (err error) {
-	u := new(Person)
+func getPersons(c echo.Context, l app.LgPersons) (err error) {
+
+	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	result, err := logic.GetPersons(u)
+
+	result, err := l.Get(u)
 	if err != nil {
 		return err
 	}
@@ -55,9 +52,9 @@ func getPersons(c echo.Context) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func getPerson(c echo.Context) (err error) {
+func getPerson(c echo.Context, l app.LgPersons) (err error) {
 	id := c.Param("id")
-	result, err := logic.GetPerson(id)
+	result, err := l.GetAll(id)
 	if err != nil {
 		return err
 	}
@@ -65,13 +62,13 @@ func getPerson(c echo.Context) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func updatePerson(c echo.Context) (err error) {
+func updatePerson(c echo.Context, l app.LgPersons) (err error) {
 	id := c.Param("id")
-	u := new(Person)
+	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	err = logic.UpdatePerson(u, id)
+	err = l.Update(u, id)
 	if err != nil {
 		return err
 	}
@@ -80,9 +77,9 @@ func updatePerson(c echo.Context) (err error) {
 
 }
 
-func deletePerson(c echo.Context) (err error) {
+func deletePerson(c echo.Context, l app.LgPersons) (err error) {
 	id := c.Param("id")
-	err = logic.DeletePerson(id)
+	err = l.Delete(id)
 	if err != nil {
 		return err
 	}
