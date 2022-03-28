@@ -7,11 +7,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var handler app.LgPersons
-
 func main() {
 	e := echo.New()
-
+	var handler app.LgPersons
 	http.NewHandlers(e, handler)
 	//Запуск локального сервера
 	e.Logger.Fatal(e.Start(":8000"))
