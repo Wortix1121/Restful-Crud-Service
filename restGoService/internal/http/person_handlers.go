@@ -36,7 +36,7 @@ func (h handlers) addPerson(c echo.Context) (err error) {
 		return err
 	}
 
-	err = h.Handler.Add(u)
+	err = h.Handler.AddPerson(u)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (h handlers) getPersons(c echo.Context) (err error) {
 		return err
 	}
 
-	result, err := h.Handler.Get(u)
+	result, err := h.Handler.GetPersons(u)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (h handlers) getPersons(c echo.Context) (err error) {
 
 func (h handlers) getPerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	result, err := h.Handler.GetAll(id)
+	result, err := h.Handler.GetPerson(id)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (h handlers) updatePerson(c echo.Context) (err error) {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	err = h.Handler.Update(u, id)
+	err = h.Handler.UpdatePerson(u, id)
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (h handlers) updatePerson(c echo.Context) (err error) {
 
 func (h handlers) deletePerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	err = h.Handler.Delete(id)
+	err = h.Handler.DeletePerson(id)
 	if err != nil {
 		return err
 	}

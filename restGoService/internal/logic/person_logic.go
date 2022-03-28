@@ -12,33 +12,33 @@ func NewLogic(person app.LgPersons) *logics {
 	return &logics{person: person}
 }
 
-func (l logics) Add(u *app.Person, d app.DbPersons) (err error) {
-	err = d.AddPerson(u)
+func (l logics) AddPerson(u *app.Person, p app.DbPersons) (err error) {
+	err = p.AddPerson(u)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (l logics) Get(u *app.Person, p app.DbPersons) (all []app.Person, err error) {
+func (l logics) GetPerson(id string, p app.DbPersons) (getOne []app.Person, err error) {
 
-	all, err = p.GetPersons(u)
-	if err != nil {
-		return all, nil
-	}
-	return all, err
-}
-
-func (l logics) GetAll(id string, p app.DbPersons) (getOne []app.Person, err error) {
 	getOne, err = p.GetPerson(id)
 	if err != nil {
-		return getOne, nil
+		return getOne, err
 	}
-	return getOne, err
+	return getOne, nil
+}
+
+func (l logics) GetPersons(u *app.Person, p app.DbPersons) (all []app.Person, err error) {
+	all, err = p.GetPersons(u)
+	if err != nil {
+		return all, err
+	}
+	return all, nil
 
 }
 
-func (l logics) Update(u *app.Person, id string, p app.DbPersons) (err error) {
+func (l logics) UpdatePerson(u *app.Person, id string, p app.DbPersons) (err error) {
 	err = p.UpdatePerson(u, id)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (l logics) Update(u *app.Person, id string, p app.DbPersons) (err error) {
 	return nil
 }
 
-func (l logics) Delete(id string, p app.DbPersons) (err error) {
+func (l logics) DeletePerson(id string, p app.DbPersons) (err error) {
 	err = p.DeletePerson(id)
 	if err != nil {
 		return err

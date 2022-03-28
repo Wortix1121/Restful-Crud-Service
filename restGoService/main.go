@@ -9,8 +9,8 @@ import (
 
 func main() {
 	e := echo.New()
-	var handler app.LgPersons
-	http.NewHandlers(e, handler)
+	var logic app.LgPersons
+	http.NewHandlers(e, logic)
 	//Запуск локального сервера
 	e.Logger.Fatal(e.Start(":8000"))
 }
