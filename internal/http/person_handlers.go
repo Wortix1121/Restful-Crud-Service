@@ -8,27 +8,35 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Starting(e *echo.Echo) {
+type handlers struct {
+	Handler app.LgPersons
+}
+
+func NewHandlers(e *echo.Echo, handler app.LgPersons) {
+
+	h := &handlers{
+		Handler: handler,
+	}
 
 	e.GET("/", home)
-	e.POST("/person", addPerson)
-	e.GET("/persons", getPersons)
-	e.GET("/person/:id", getPerson)
-	e.PUT("/person/:id", updatePerson)
-	e.DELETE("/person/:id", deletePerson)
-
+	e.POST("/person", h.addPerson)
+	e.GET("/persons", h.getPersons)
+	e.GET("/person/:id", h.getPerson)
+	e.PUT("/person/:id", h.updatePerson)
+	e.DELETE("/person/:id", h.deletePerson)
 }
+
 func home(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello!")
 }
 
-func addPerson(c echo.Context, l app.LgPersons) (err error) {
+func (h handlers) addPerson(c echo.Context) (err error) {
 	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
 
-	err = l.Add(u)
+	err = h.Handler.Add(u)
 	if err != nil {
 		return err
 	}
@@ -37,14 +45,14 @@ func addPerson(c echo.Context, l app.LgPersons) (err error) {
 
 }
 
-func getPersons(c echo.Context, l app.LgPersons) (err error) {
+func (h handlers) getPersons(c echo.Context) (err error) {
 
 	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
 
-	result, err := l.Get(u)
+	result, err := h.Handler.Get(u)
 	if err != nil {
 		return err
 	}
@@ -52,9 +60,9 @@ func getPersons(c echo.Context, l app.LgPersons) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func getPerson(c echo.Context, l app.LgPersons) (err error) {
+func (h handlers) getPerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	result, err := l.GetAll(id)
+	result, err := h.Handler.GetAll(id)
 	if err != nil {
 		return err
 	}
@@ -62,13 +70,13 @@ func getPerson(c echo.Context, l app.LgPersons) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func updatePerson(c echo.Context, l app.LgPersons) (err error) {
+func (h handlers) updatePerson(c echo.Context) (err error) {
 	id := c.Param("id")
 	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	err = l.Update(u, id)
+	err = h.Handler.Update(u, id)
 	if err != nil {
 		return err
 	}
@@ -77,9 +85,9 @@ func updatePerson(c echo.Context, l app.LgPersons) (err error) {
 
 }
 
-func deletePerson(c echo.Context, l app.LgPersons) (err error) {
+func (h handlers) deletePerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	err = l.Delete(id)
+	err = h.Handler.Delete(id)
 	if err != nil {
 		return err
 	}
