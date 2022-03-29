@@ -69,7 +69,7 @@ func (d dataBase) AddPerson(u *app.Person) (err error) {
 		return err
 	}
 	defer create.Close()
-	return err
+	return nil
 
 }
 
@@ -92,7 +92,7 @@ func (d dataBase) GetPersons(u *app.Person) (persons []app.Person, err error) {
 		}
 		persons = append(persons, person)
 	}
-	return persons, err
+	return persons, nil
 
 }
 
@@ -115,7 +115,7 @@ func (d dataBase) GetPerson(id string) (persons []app.Person, err error) {
 		}
 		Persons = append(Persons, person)
 	}
-	return Persons, err
+	return Persons, nil
 }
 
 func (d dataBase) UpdatePerson(u *app.Person, id string) (err error) {
@@ -126,7 +126,7 @@ func (d dataBase) UpdatePerson(u *app.Person, id string) (err error) {
 		return err
 	}
 	defer res.Close()
-	return err
+	return nil
 }
 
 func (d dataBase) DeletePerson(id string) (err error) {
@@ -137,5 +137,5 @@ func (d dataBase) DeletePerson(id string) (err error) {
 		return err
 	}
 	defer res.Close()
-	return err
+	return nil
 }
