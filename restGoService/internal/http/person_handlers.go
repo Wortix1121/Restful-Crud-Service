@@ -9,13 +9,13 @@ import (
 )
 
 type handlers struct {
-	Handler app.LgPersons
+	Logic app.LgPersons
 }
 
-func NewHandlers(e *echo.Echo, handler app.LgPersons) {
+func NewHandlers(e *echo.Echo, logics app.LgPersons) {
 
 	h := &handlers{
-		Handler: handler,
+		Logic: logics,
 	}
 
 	e.GET("/", home)
@@ -30,13 +30,13 @@ func home(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello!")
 }
 
-func (h handlers) addPerson(c echo.Context) (err error) {
+func (l handlers) addPerson(c echo.Context) (err error) {
 	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
 
-	err = h.Handler.AddPerson(u)
+	err = l.Logic.AddPerson(u)
 	if err != nil {
 		return err
 	}
@@ -45,14 +45,14 @@ func (h handlers) addPerson(c echo.Context) (err error) {
 
 }
 
-func (h handlers) getPersons(c echo.Context) (err error) {
+func (l handlers) getPersons(c echo.Context) (err error) {
 
 	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
 
-	result, err := h.Handler.GetPersons(u)
+	result, err := l.Logic.GetPersons(u)
 	if err != nil {
 		return err
 	}
@@ -60,9 +60,9 @@ func (h handlers) getPersons(c echo.Context) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func (h handlers) getPerson(c echo.Context) (err error) {
+func (l handlers) getPerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	result, err := h.Handler.GetPerson(id)
+	result, err := l.Logic.GetPerson(id)
 	if err != nil {
 		return err
 	}
@@ -70,13 +70,13 @@ func (h handlers) getPerson(c echo.Context) (err error) {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func (h handlers) updatePerson(c echo.Context) (err error) {
+func (l handlers) updatePerson(c echo.Context) (err error) {
 	id := c.Param("id")
 	u := new(app.Person)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	err = h.Handler.UpdatePerson(u, id)
+	err = l.Logic.UpdatePerson(u, id)
 	if err != nil {
 		return err
 	}
@@ -85,9 +85,9 @@ func (h handlers) updatePerson(c echo.Context) (err error) {
 
 }
 
-func (h handlers) deletePerson(c echo.Context) (err error) {
+func (l handlers) deletePerson(c echo.Context) (err error) {
 	id := c.Param("id")
-	err = h.Handler.DeletePerson(id)
+	err = l.Logic.DeletePerson(id)
 	if err != nil {
 		return err
 	}
