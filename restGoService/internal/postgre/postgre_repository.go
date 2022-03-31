@@ -45,7 +45,7 @@ const (
 )
 
 var (
-	Persons = []app.Person{}
+	Persons = app.Person{}
 )
 
 func Connect() *sql.DB {
@@ -96,7 +96,7 @@ func (d dataBase) GetPersons(u *app.Person) (persons []app.Person, err error) {
 
 }
 
-func (d dataBase) GetPerson(id string) (persons []app.Person, err error) {
+func (d dataBase) GetPerson(id string) (persons app.Person, err error) {
 	db := Connect()
 	sqlInq := "SELECT id, email, phone, firstname, lastname FROM persons WHERE id=$1"
 	res, err := db.Query(sqlInq, id)
@@ -105,7 +105,7 @@ func (d dataBase) GetPerson(id string) (persons []app.Person, err error) {
 	}
 	defer res.Close()
 
-	Persons = []app.Person{}
+	Persons = app.Person{}
 
 	for res.Next() {
 		var person app.Person
@@ -113,7 +113,7 @@ func (d dataBase) GetPerson(id string) (persons []app.Person, err error) {
 		if err2 != nil {
 			log.Println(err2)
 		}
-		Persons = append(Persons, person)
+		Persons = person
 	}
 	return Persons, nil
 }

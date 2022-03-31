@@ -20,7 +20,7 @@ func (l logics) AddPerson(u *app.Person, p app.DbPersons) (err error) {
 	return nil
 }
 
-func (l logics) GetPerson(id string, p app.DbPersons) (getOne []app.Person, err error) {
+func (l logics) GetPerson(id string, p app.DbPersons) (getOne app.Person, err error) {
 
 	getOne, err = p.GetPerson(id)
 	if err != nil {
