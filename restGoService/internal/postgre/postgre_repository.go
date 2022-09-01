@@ -11,17 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// type Server interface {
-// }
-
-// type logics struct {
-// 	person app.Persons
-// }
-
-// func NewLogic(person app.Persons) *logics {
-// 	return &logics{person: person}
-// }
-
 type dataBase struct {
 	config *Config
 	logger *logrus.Logger

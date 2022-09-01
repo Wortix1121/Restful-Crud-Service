@@ -8,6 +8,7 @@ require gopkg.in/yaml.v2 v2.4.0 // indirect
 
 require (
 	github.com/go-delve/delve v1.8.2
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/lib/pq v1.10.4
 	github.com/mattn/go-colorable v0.1.11 // indirect
